@@ -3,5 +3,5 @@
 extern crate alloc;
 
 pub mod task;
-mod task_state;
+pub mod task_state;
 pub mod schedule;

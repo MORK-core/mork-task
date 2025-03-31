@@ -8,15 +8,18 @@ use crate::task_state::ThreadStateEnum;
 
 #[allow(dead_code)]
 pub struct TaskContext {
-    hal_context: HALContext,
+    pub hal_context: HALContext,
     pub prio: usize,
     pub vspace: Option<Arc<SyncUnsafeCell<PageTableImpl>>>,
-    state: ThreadStateEnum
+    pub state: ThreadStateEnum
 }
 impl TaskContext {
-    pub fn new() -> Self {
+    pub fn new_user_thread() -> Self {
+        let mut hal_context = HALContext::new();
+        hal_context.set_user_flag(true);
+        hal_context.set_interrupt_enable(true);
         Self {
-            hal_context: HALContext::new(),
+            hal_context,
             prio: MAX_THREAD_PIRO - 1,
             vspace: None,
             state: ThreadStateEnum::ThreadStateInactive,
@@ -27,13 +30,13 @@ impl TaskContext {
         let mut hal_context = HALContext::new();
         hal_context.set_stack(stack_ptr);
         hal_context.set_next_ip(idle_thread as usize);
-        hal_context.configure_idle();
+        hal_context.set_interrupt_enable(true);
+        hal_context.set_user_flag(false);
         Self {
             hal_context,
             prio: MAX_THREAD_PIRO,
             vspace: None,
             state: ThreadStateEnum::ThreadStateIdleThreadState
         }
-
     }
 }
