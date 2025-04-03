@@ -25,7 +25,7 @@ impl Scheduler {
     }
 
     pub fn dequeue(&mut self) -> Option<Box<TaskContext>> {
-        if self.priority > MAX_THREAD_PIRO {
+        if self.priority >= MAX_THREAD_PIRO {
             return None;
         }
         let task = self.task_queues[self.priority].pop_front()?;

@@ -8,4 +8,5 @@ edition = "2024"
 [dependencies]
 mork-hal = { path = "../mork-hal" }
 mork-common = { path = "../../mork-common" }
+mork-capability = { path = "../mork-capability" }
 log = "0.4"
