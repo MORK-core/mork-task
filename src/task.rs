@@ -7,7 +7,7 @@ use mork_common::constants::MAX_THREAD_PIRO;
 use mork_common::syscall::ipc_buffer::IPCBuffer;
 use mork_common::types::SyncUnsafeCell;
 use mork_hal::idle_thread;
-use mork_hal::mm::PageTableImpl;
+use mork_mm::page_table::PageTable;
 use crate::task_state::ThreadStateEnum;
 
 #[allow(dead_code)]
@@ -15,7 +15,7 @@ use crate::task_state::ThreadStateEnum;
 pub struct TaskContext {
     pub hal_context: HALContext,
     pub prio: usize,
-    pub vspace: Option<Arc<SyncUnsafeCell<PageTableImpl>>>,
+    pub vspace: Option<Arc<SyncUnsafeCell<PageTable>>>,
     pub cspace: Option<Arc<SyncUnsafeCell<CapNode>>>,
     pub ipc_buffer: Option<Box<IPCBuffer>>,
 
