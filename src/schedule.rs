@@ -18,8 +18,16 @@ impl Scheduler {
         }
     }
 
-    pub fn enqueue(&mut self, task: Box<TaskContext>) {
+    pub fn enqueue_front(&mut self, mut task: Box<TaskContext>) {
         assert!(task.prio < MAX_THREAD_PIRO);
+        task.is_queued = true;
+        self.priority = min(self.priority, task.prio);
+        self.task_queues[task.prio].push_front(task);
+    }
+
+    pub fn enqueue_back(&mut self, mut task: Box<TaskContext>) {
+        assert!(task.prio < MAX_THREAD_PIRO);
+        task.is_queued = true;
         self.priority = min(self.priority, task.prio);
         self.task_queues[task.prio].push_back(task);
     }
