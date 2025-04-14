@@ -1,6 +1,6 @@
 use alloc::boxed::Box;
 use mork_hal::context::{HALContext, HALContextTrait};
-use mork_capability::cap::{CNodeCap, Cap, CapType, PageTableCap, ThreadCap};
+use mork_capability::cap::{Cap, CapType, PageTableCap, ThreadCap};
 use mork_capability::cnode::{CapIndex, CapNode};
 use mork_common::constants::{CNodeSlot, MAX_THREAD_PIRO};
 use mork_common::mork_kernel_log;
@@ -42,9 +42,7 @@ impl TaskContext {
         self.cspace = Some(Box::new(CapNode::new()));
         let thread_cap = ThreadCap::new(self.get_ptr());
         let cap_node = self.cspace.as_mut().unwrap();
-        let cnode_cap = CNodeCap::new(cap_node.get_ptr());
         cap_node[CNodeSlot::CapInitThread as usize] = thread_cap.into_cap();
-        cap_node[CNodeSlot::CapInitCNode as usize] = cnode_cap.into_cap();
         cap_node[CNodeSlot::CapInitVSpace as usize] = Cap::default();
     }
 
