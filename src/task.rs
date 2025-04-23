@@ -1,7 +1,7 @@
 use alloc::boxed::Box;
 use mork_hal::context::{HALContext, HALContextTrait};
 use mork_capability::cap::{Cap, CapType, PageTableCap, ThreadCap};
-use mork_capability::cnode::{CapIndex, CapNode};
+use mork_capability::cnode::CapNode;
 use mork_common::constants::{CNodeSlot, MAX_THREAD_PIRO};
 use mork_common::mork_kernel_log;
 use mork_common::syscall::ipc_buffer::IPCBuffer;
@@ -16,7 +16,7 @@ pub struct TaskContext {
     pub hal_context: HALContext,
     pub prio: usize,
     pub cspace: Option<Box<CapNode>>,
-    pub ipc_buffer: Option<CapIndex>,
+    pub ipc_buffer_ptr: Option<usize>,
     pub is_queued: bool,
     pub time_slice: usize,
     pub state: ThreadStateEnum
@@ -31,7 +31,7 @@ impl TaskContext {
             hal_context,
             prio: MAX_THREAD_PIRO - 1,
             cspace: None,
-            ipc_buffer: None,
+            ipc_buffer_ptr: None,
             is_queued: false,
             time_slice: TIME_SLICE,
             state: ThreadStateEnum::ThreadStateInactive,
@@ -82,7 +82,7 @@ impl TaskContext {
             hal_context,
             prio: MAX_THREAD_PIRO,
             cspace: None,
-            ipc_buffer: None,
+            ipc_buffer_ptr: None,
             is_queued: false,
             time_slice: TIME_SLICE,
             state: ThreadStateEnum::ThreadStateIdleThreadState
@@ -100,12 +100,7 @@ impl TaskContext {
     }
 
     fn get_ipc_buffer_ptr(&self) -> Option<usize> {
-        let cspace = self.cspace.as_ref()?;
-        let cap = &cspace[self.ipc_buffer?];
-        if cap.get_type() != CapType::Frame {
-            return None;
-        }
-        Some(unsafe { (cap.frame_cap.base_ptr() << 12) as usize })
+        self.ipc_buffer_ptr
     }
 
     fn get_page_table_cap(&self) -> Option<&PageTableCap> {
